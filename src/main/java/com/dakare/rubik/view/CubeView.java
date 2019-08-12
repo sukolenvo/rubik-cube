@@ -1,5 +1,6 @@
 package com.dakare.rubik.view;
 
+import com.dakare.rubik.model.CubeItem;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -9,17 +10,13 @@ public class CubeView extends Group {
 
     public static final int SIZE = 10;
 
-    public CubeView(Color color) {
-        this(color, color, color, color, color, color);
-    }
-
-    public CubeView(Color top, Color bottom, Color left, Color right, Color front, Color back) {
-        createTopEdge(top);
-        createBottomEdge(bottom);
-        createLeftEdge(left);
-        createRightEdge(right);
-        createFrontEdge(front);
-        createBackEdge(back);
+    public CubeView(CubeItem cubeItem) {
+        createTopEdge(cubeItem.getTop());
+        createBottomEdge(cubeItem.getBottom());
+        createLeftEdge(cubeItem.getLeft());
+        createRightEdge(cubeItem.getRight());
+        createFrontEdge(cubeItem.getFront());
+        createBackEdge(cubeItem.getBack());
     }
 
     private void createBackEdge(Color color) {
