@@ -22,11 +22,32 @@ public class RubikCube {
     private Side left = new Side(Color.BLUE, Color.BLUE, Color.BLUE,
             Color.BLUE, Color.BLUE, Color.BLUE,
             Color.BLUE, Color.BLUE, Color.BLUE);
+    private CubeItem[] items = new CubeItem[27];
+
+    {
+        for (int i = 0; i < 27; i++) {
+            items[i] = createCubeItem(getX(i), getY(i), getZ(i))
+                    .index(i)
+                    .build();
+        }
+    }
+
+    public static int getX(int index) {
+        return index % 3;
+    }
+
+    public static int getY(int index) {
+        return index / 3 % 3;
+    }
+
+    public static int getZ(int index) {
+        return index / 9;
+    }
 
     /**
      * From top left front corner.
      */
-    public CubeItem getCubeItem(int x, int y, int z) {
+    private CubeItem.CubeItemBuilder createCubeItem(int x, int y, int z) {
         Preconditions.checkArgument(x >= 0 && x < 3, "x is invalid %d", x);
         Preconditions.checkArgument(y >= 0 && y < 3, "y is invalid %d", y);
         Preconditions.checkArgument(z >= 0 && z < 3, "z is invalid %d", z);
@@ -46,6 +67,16 @@ public class RubikCube {
         } else if (z == 2) {
             builder.back(back.getColor(2 - x, y));
         }
-        return builder.build();
+        return builder;
+    }
+
+    public CubeItem getCubeItem(int index) {
+        return items[index];
+    }
+
+    public void swap(int from, int to) {
+        CubeItem item = items[from];
+        items[from] = items[to];
+        items[to] = item;
     }
 }

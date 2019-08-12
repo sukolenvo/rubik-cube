@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class CubeItem {
+    private int index;
     @Builder.Default
     private Color top = Color.BLACK;
     @Builder.Default
