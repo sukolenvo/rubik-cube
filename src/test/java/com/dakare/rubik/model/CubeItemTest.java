@@ -135,4 +135,62 @@ class CubeItemTest {
     assertThat(copy)
         .isEqualTo(original);
   }
+
+  @Test
+  void rotateTop() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.TOP);
+    assertThat(copy)
+        .as("check front moved to left")
+        .returns(original.getFront(), CubeItem::getLeft)
+        .as("check left moved to back")
+        .returns(original.getLeft(), CubeItem::getBack)
+        .as("check back moved to right")
+        .returns(original.getBack(), CubeItem::getRight)
+        .as("check right moved to front")
+        .returns(original.getRight(), CubeItem::getFront)
+        .as("check top and bottom not changed")
+        .returns(original.getTop(), CubeItem::getTop)
+        .returns(original.getBottom(), CubeItem::getBottom);
+  }
+
+  @Test
+  void rotateTopCounterClockwise() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.COUNTER_CLOCKWISE_TOP);
+    copy.rotate(RotateDirection.TOP);
+    assertThat(copy)
+        .isEqualTo(original);
+  }
+
+  @Test
+  void rotateRight() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.RIGHT);
+    assertThat(copy)
+        .as("check front moved to top")
+        .returns(original.getFront(), CubeItem::getTop)
+        .as("check top moved to back")
+        .returns(original.getTop(), CubeItem::getBack)
+        .as("check back moved to bottom")
+        .returns(original.getBack(), CubeItem::getBottom)
+        .as("check bottom moved to front")
+        .returns(original.getBottom(), CubeItem::getFront)
+        .as("check left and right not changed")
+        .returns(original.getLeft(), CubeItem::getLeft)
+        .returns(original.getRight(), CubeItem::getRight);
+  }
+
+  @Test
+  void rotateRightCounterClockwise() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    copy.rotate(RotateDirection.RIGHT);
+    assertThat(copy)
+        .isEqualTo(original);
+  }
 }

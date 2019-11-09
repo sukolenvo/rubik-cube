@@ -105,6 +105,18 @@ public class CubeItem {
       case COUNTER_CLOCKWISE_FRONT:
         rotate(TOP_INDEX, LEFT_INDEX, BOTTOM_INDEX, RIGHT_INDEX);
         return;
+      case RIGHT:
+        rotate(TOP_INDEX, BACK_INDEX, BOTTOM_INDEX, FRONT_INDEX);
+        return;
+      case COUNTER_CLOCKWISE_RIGHT:
+        rotate(TOP_INDEX, FRONT_INDEX, BOTTOM_INDEX, BACK_INDEX);
+        return;
+      case TOP:
+        rotate(FRONT_INDEX, LEFT_INDEX, BACK_INDEX, RIGHT_INDEX);
+        return;
+      case COUNTER_CLOCKWISE_TOP:
+        rotate(FRONT_INDEX, RIGHT_INDEX, BACK_INDEX, LEFT_INDEX);
+        return;
       default:
         throw new UnsupportedOperationException("Rotation direction is not supported: " + rotateDirection);
     }

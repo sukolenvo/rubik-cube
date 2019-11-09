@@ -11,7 +11,11 @@ import lombok.RequiredArgsConstructor;
 public enum RotateDirection {
 
     FRONT(KeyCode.R, true),
-    COUNTER_CLOCKWISE_FRONT(KeyCode.T, false);
+    COUNTER_CLOCKWISE_FRONT(KeyCode.T, false),
+    RIGHT(KeyCode.G, true),
+    COUNTER_CLOCKWISE_RIGHT(KeyCode.B, false),
+    TOP(KeyCode.E, true),
+    COUNTER_CLOCKWISE_TOP(KeyCode.D, false);
 
     private final KeyCode key;
     private final boolean clockwise;
