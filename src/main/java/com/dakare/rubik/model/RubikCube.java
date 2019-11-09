@@ -1,82 +1,144 @@
 package com.dakare.rubik.model;
 
+import com.dakare.rubik.rotate.RotateDirection;
 import com.google.common.base.Preconditions;
-import javafx.scene.paint.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+@EqualsAndHashCode
 public class RubikCube {
-    private Side front = new Side(Color.WHITE, Color.WHITE, Color.WHITE,
-            Color.WHITE, Color.WHITE, Color.WHITE,
-            Color.WHITE, Color.WHITE, Color.WHITE);
-    private Side right = new Side(Color.GREEN, Color.GREEN, Color.GREEN,
-            Color.GREEN, Color.GREEN, Color.GREEN,
-            Color.GREEN, Color.GREEN, Color.GREEN);
-    private Side top = new Side(Color.RED, Color.RED, Color.RED,
-            Color.RED, Color.RED, Color.RED,
-            Color.RED, Color.RED, Color.RED);
-    private Side bottom = new Side(Color.ORANGE, Color.ORANGE, Color.ORANGE,
-            Color.ORANGE, Color.ORANGE, Color.ORANGE,
-            Color.ORANGE, Color.ORANGE, Color.ORANGE);
-    private Side back = new Side(Color.YELLOW, Color.YELLOW, Color.YELLOW,
-            Color.YELLOW, Color.YELLOW, Color.YELLOW,
-            Color.YELLOW, Color.YELLOW, Color.YELLOW);
-    private Side left = new Side(Color.BLUE, Color.BLUE, Color.BLUE,
-            Color.BLUE, Color.BLUE, Color.BLUE,
-            Color.BLUE, Color.BLUE, Color.BLUE);
-    private CubeItem[] items = new CubeItem[27];
 
-    {
-        for (int i = 0; i < 27; i++) {
-            items[i] = createCubeItem(getX(i), getY(i), getZ(i))
-                    .index(i)
-                    .build();
-        }
+  public static final int SIZE = 3;
+
+  static final ColorWrapper INITIAL_COLOR_FRONT = ColorWrapper.WHITE;
+  static final ColorWrapper INITIAL_COLOR_RIGHT = ColorWrapper.GREEN;
+  static final ColorWrapper INITIAL_COLOR_TOP = ColorWrapper.RED;
+  static final ColorWrapper INITIAL_COLOR_BOTTOM = ColorWrapper.ORANGE;
+  static final ColorWrapper INITIAL_COLOR_BACK = ColorWrapper.YELLOW;
+  static final ColorWrapper INITIAL_COLOR_LEFT = ColorWrapper.BLUE;
+
+  @Getter
+  private final CubeItem[] items;
+
+  public RubikCube() {
+    items = new CubeItem[SIZE * SIZE * SIZE];
+    for (int i = 0; i < items.length; i++) {
+      CubeItem cubeItem = new CubeItem(i);
+      if (cubeItem.getX() == 0) {
+        cubeItem.setLeft(INITIAL_COLOR_LEFT);
+      } else if (cubeItem.getX() == SIZE - 1) {
+        cubeItem.setRight(INITIAL_COLOR_RIGHT);
+      }
+      if (cubeItem.getY() == 0) {
+        cubeItem.setTop(INITIAL_COLOR_TOP);
+      } else if (cubeItem.getY() == SIZE - 1) {
+        cubeItem.setBottom(INITIAL_COLOR_BOTTOM);
+      }
+      if (cubeItem.getZ() == 0) {
+        cubeItem.setFront(INITIAL_COLOR_FRONT);
+      } else if (cubeItem.getZ() == SIZE - 1) {
+        cubeItem.setBack(INITIAL_COLOR_BACK);
+      }
+      items[i] = cubeItem;
+    }
+  }
+
+  List<CubeItem> getFrontItems() {
+    return Arrays.stream(items)
+        .filter(item -> item.getIndex() < SIZE * SIZE)
+        .sorted(Comparator.comparingInt(CubeItem::getIndex))
+        .collect(Collectors.toList());
+  }
+
+  List<CubeItem> getBackItems() {
+    return Arrays.stream(items)
+        .filter(item -> item.getZ() == SIZE - 1)
+        .sorted(Comparator.comparingInt(CubeItem::getY)
+            .thenComparing(Comparator.comparingInt(CubeItem::getX).reversed()))
+        .collect(Collectors.toList());
+  }
+
+  List<CubeItem> getTopItems() {
+    return Arrays.stream(items)
+        .filter(item -> item.getY() == 0)
+        .sorted(Comparator.comparingInt(CubeItem::getZ).reversed()
+            .thenComparingInt(CubeItem::getX))
+        .collect(Collectors.toList());
+  }
+
+  List<CubeItem> getBottomItems() {
+    return Arrays.stream(items)
+        .filter(item -> item.getY() == SIZE - 1)
+        .sorted(Comparator.comparingInt(CubeItem::getZ)
+            .thenComparing(Comparator.comparingInt(CubeItem::getX).reversed()))
+        .collect(Collectors.toList());
+  }
+
+  List<CubeItem> getLeftItems() {
+    return Arrays.stream(items)
+        .filter(item -> item.getX() == 0)
+        .sorted(Comparator.comparingInt(CubeItem::getY)
+            .thenComparing(Comparator.comparingInt(CubeItem::getZ).reversed()))
+        .collect(Collectors.toList());
+  }
+
+  List<CubeItem> getRightItems() {
+    return Arrays.stream(items)
+        .filter(item -> item.getX() == SIZE - 1)
+        .sorted(Comparator.comparingInt(CubeItem::getY)
+            .thenComparingInt(CubeItem::getZ))
+        .collect(Collectors.toList());
+  }
+
+  public void rotate(RotateDirection rotateDirection) {
+    switch (rotateDirection) {
+      case FRONT:
+      case COUNTER_CLOCKWISE_FRONT:
+        rotate(getFrontItems(), rotateDirection);
+        return;
+      default:
+        throw new UnsupportedOperationException(rotateDirection + " is not supported");
+    }
+  }
+
+  private void rotate(List<CubeItem> items, RotateDirection rotateDirection) {
+    Preconditions.checkArgument(RubikCube.SIZE <= 3, "This method is simplified to support Rubik Cube 3x3"
+        + " or less. To work with higher dimension cube please update this method to a generic version");
+    List<CubeItem> ringFromSide = getRingFromSide(items);
+    if (!rotateDirection.isClockwise()) {
+      Collections.reverse(ringFromSide);
+    }
+    for (int i = 0; i < RubikCube.SIZE - 1; i++) {
+      int firstIndex = ringFromSide.get(i).getIndex();
+      ringFromSide.get(i).setIndex(ringFromSide.get(i + RubikCube.SIZE - 1).getIndex());
+      ringFromSide.get(i + RubikCube.SIZE - 1).setIndex(ringFromSide.get(i + (RubikCube.SIZE - 1) * 2).getIndex());
+      ringFromSide.get(i + (RubikCube.SIZE - 1) * 2).setIndex(ringFromSide.get(i + (RubikCube.SIZE - 1) * 3).getIndex());
+      ringFromSide.get(i + (RubikCube.SIZE - 1) * 3).setIndex(firstIndex);
+    }
+    ringFromSide.forEach(cubeItem -> cubeItem.rotate(rotateDirection));
+  }
+
+  List<CubeItem> getRingFromSide(List<CubeItem> items) {
+    List<CubeItem> result = new ArrayList<>();
+    for (int i = 0; i < RubikCube.SIZE; i++) { //top line
+      result.add(items.get(i));
+    }
+    for (int j = RubikCube.SIZE * 2 - 1; j < RubikCube.SIZE * RubikCube.SIZE; j += RubikCube.SIZE) { //right column
+      result.add(items.get(j));
     }
 
-    public static int getX(int index) {
-        return index % 3;
+    for (int i = RubikCube.SIZE * RubikCube.SIZE - 2; i >= RubikCube.SIZE * (RubikCube.SIZE - 1); i--) { //bottom line
+      result.add(items.get(i));
     }
-
-    public static int getY(int index) {
-        return index / 3 % 3;
+    for (int j = RubikCube.SIZE * (RubikCube.SIZE - 2); j > 0; j -= RubikCube.SIZE) { // left line
+      result.add(items.get(j));
     }
-
-    public static int getZ(int index) {
-        return index / 9;
-    }
-
-    /**
-     * From top left front corner.
-     */
-    private CubeItem.CubeItemBuilder createCubeItem(int x, int y, int z) {
-        Preconditions.checkArgument(x >= 0 && x < 3, "x is invalid %d", x);
-        Preconditions.checkArgument(y >= 0 && y < 3, "y is invalid %d", y);
-        Preconditions.checkArgument(z >= 0 && z < 3, "z is invalid %d", z);
-        CubeItem.CubeItemBuilder builder = CubeItem.builder();
-        if (x == 0) {
-            builder.left(left.getColor(z, y));
-        } else if (x == 2) {
-            builder.right(right.getColor(z, y));
-        }
-        if (y == 0) {
-            builder.top(top.getColor(x, 2 - z));
-        } else if (y == 2) {
-            builder.bottom(bottom.getColor(x, 2 - z));
-        }
-        if (z == 0) {
-            builder.front(front.getColor(x, y));
-        } else if (z == 2) {
-            builder.back(back.getColor(2 - x, y));
-        }
-        return builder;
-    }
-
-    public CubeItem getCubeItem(int index) {
-        return items[index];
-    }
-
-    public void swap(int from, int to) {
-        CubeItem item = items[from];
-        items[from] = items[to];
-        items[to] = item;
-    }
+    return result;
+  }
 }
