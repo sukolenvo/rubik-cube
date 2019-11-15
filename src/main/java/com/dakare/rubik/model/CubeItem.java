@@ -1,5 +1,6 @@
 package com.dakare.rubik.model;
 
+import com.dakare.rubik.rotate.CubeItemMove;
 import com.dakare.rubik.rotate.RotateDirection;
 import java.util.Arrays;
 import lombok.EqualsAndHashCode;
@@ -29,6 +30,12 @@ public class CubeItem {
   public CubeItem(CubeItem from) {
     index = from.index;
     System.arraycopy(from.colors, 0, colors, 0, from.colors.length);
+  }
+
+  public CubeItemMove moveTo(int index) {
+    int from = this.index;
+    this.index = index;
+    return new CubeItemMove(from, index);
   }
 
   public ColorWrapper getTop() {

@@ -1,6 +1,7 @@
 package com.dakare.rubik.model;
 
 import com.dakare.rubik.rotate.RotateDirection;
+import com.dakare.rubik.rotate.CubeItemMove;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,40 +97,43 @@ public class RubikCube {
         .collect(Collectors.toList());
   }
 
-  public void rotate(RotateDirection rotateDirection) {
+  public List<CubeItemMove> rotate(RotateDirection rotateDirection) {
     switch (rotateDirection) {
       case FRONT:
       case COUNTER_CLOCKWISE_FRONT:
-        rotate(getFrontItems(), rotateDirection);
-        return;
+        return rotate(getFrontItems(), rotateDirection);
       case RIGHT:
       case COUNTER_CLOCKWISE_RIGHT:
-        rotate(getRightItems(), rotateDirection);
-        return;
+        return rotate(getRightItems(), rotateDirection);
       case TOP:
       case COUNTER_CLOCKWISE_TOP:
-        rotate(getTopItems(), rotateDirection);
-        return;
+        return rotate(getTopItems(), rotateDirection);
       default:
         throw new UnsupportedOperationException(rotateDirection + " is not supported");
     }
   }
 
-  private void rotate(List<CubeItem> items, RotateDirection rotateDirection) {
+  private List<CubeItemMove> rotate(List<CubeItem> items, RotateDirection rotateDirection) {
     Preconditions.checkArgument(RubikCube.SIZE <= 3, "This method is simplified to support Rubik Cube 3x3"
         + " or less. To work with higher dimension cube please update this method to a generic version");
     List<CubeItem> ringFromSide = getRingFromSide(items);
     if (!rotateDirection.isClockwise()) {
       Collections.reverse(ringFromSide);
     }
+    List<CubeItemMove> result = new ArrayList<>();
     for (int i = 0; i < RubikCube.SIZE - 1; i++) {
       int firstIndex = ringFromSide.get(i).getIndex();
-      ringFromSide.get(i).setIndex(ringFromSide.get(i + RubikCube.SIZE - 1).getIndex());
-      ringFromSide.get(i + RubikCube.SIZE - 1).setIndex(ringFromSide.get(i + (RubikCube.SIZE - 1) * 2).getIndex());
-      ringFromSide.get(i + (RubikCube.SIZE - 1) * 2).setIndex(ringFromSide.get(i + (RubikCube.SIZE - 1) * 3).getIndex());
-      ringFromSide.get(i + (RubikCube.SIZE - 1) * 3).setIndex(firstIndex);
+      result.add(ringFromSide.get(i)
+          .moveTo(ringFromSide.get(i + RubikCube.SIZE - 1).getIndex()));
+      result.add(ringFromSide.get(i + RubikCube.SIZE - 1)
+          .moveTo(ringFromSide.get(i + (RubikCube.SIZE - 1) * 2).getIndex()));
+      result.add(ringFromSide.get(i + (RubikCube.SIZE - 1) * 2)
+          .moveTo(ringFromSide.get(i + (RubikCube.SIZE - 1) * 3).getIndex()));
+      result.add(ringFromSide.get(i + (RubikCube.SIZE - 1) * 3)
+          .moveTo(firstIndex));
     }
     ringFromSide.forEach(cubeItem -> cubeItem.rotate(rotateDirection));
+    return result;
   }
 
   List<CubeItem> getRingFromSide(List<CubeItem> items) {
