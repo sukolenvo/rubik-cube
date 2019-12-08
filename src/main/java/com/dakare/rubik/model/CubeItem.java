@@ -107,20 +107,26 @@ public class CubeItem {
   public void rotate(RotateDirection rotateDirection) {
     switch (rotateDirection) {
       case FRONT:
+      case COUNTER_CLOCKWISE_BACK:
         rotate(TOP_INDEX, RIGHT_INDEX, BOTTOM_INDEX, LEFT_INDEX);
         return;
+      case BACK:
       case COUNTER_CLOCKWISE_FRONT:
         rotate(TOP_INDEX, LEFT_INDEX, BOTTOM_INDEX, RIGHT_INDEX);
         return;
       case RIGHT:
+      case COUNTER_CLOCKWISE_LEFT:
         rotate(TOP_INDEX, BACK_INDEX, BOTTOM_INDEX, FRONT_INDEX);
         return;
+      case LEFT:
       case COUNTER_CLOCKWISE_RIGHT:
         rotate(TOP_INDEX, FRONT_INDEX, BOTTOM_INDEX, BACK_INDEX);
         return;
       case TOP:
+      case BOTTOM:
         rotate(FRONT_INDEX, LEFT_INDEX, BACK_INDEX, RIGHT_INDEX);
         return;
+      case COUNTER_CLOCKWISE_BOTTOM:
       case COUNTER_CLOCKWISE_TOP:
         rotate(FRONT_INDEX, RIGHT_INDEX, BACK_INDEX, LEFT_INDEX);
         return;

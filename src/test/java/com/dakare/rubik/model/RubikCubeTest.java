@@ -197,4 +197,139 @@ class RubikCubeTest {
     assertThat(rubikCube)
         .isEqualTo(new RubikCube());
   }
+
+  @Test
+  void rotate_back_initial() {
+    rubikCube.rotate(RotateDirection.BACK);
+    assertThat(rubikCube.getBackItems())
+        .as("check back side after back rotation unchanged")
+        .extracting(CubeItem::getBack)
+        .allMatch(color -> color == RubikCube.INITIAL_COLOR_BACK);
+    assertThat(rubikCube.getFrontItems())
+        .as("check front side after back rotation")
+        .extracting(CubeItem::getFront)
+        .allMatch(color -> color == RubikCube.INITIAL_COLOR_FRONT);
+    assertThat(rubikCube.getTopItems())
+        .as("check top side after back rotation. But Got: %s", rubikCube.getTopItems())
+        .extracting(CubeItem::getTop)
+        .containsExactly(RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT,
+            RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_TOP,
+            RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_TOP);
+    assertThat(rubikCube.getRightItems())
+        .as("check right side after back rotation. But Got: %s", rubikCube.getRightItems())
+        .extracting(CubeItem::getRight)
+        .containsExactly(RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_BOTTOM,
+            RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_BOTTOM,
+            RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_BOTTOM);
+    assertThat(rubikCube.getBottomItems())
+        .as("check bottom side after back rotation. But Got: %s", rubikCube.getBottomItems())
+        .extracting(CubeItem::getBottom)
+        .containsExactly(RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_BOTTOM,
+            RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_BOTTOM,
+            RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT);
+    assertThat(rubikCube.getLeftItems())
+        .as("check left side after back rotation. But Got: %s", rubikCube.getLeftItems())
+        .extracting(CubeItem::getLeft)
+        .containsExactly(RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT,
+            RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT,
+            RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT);
+  }
+
+  @Test
+  void rotate_back_counterClockwise() {
+    rubikCube.rotate(RotateDirection.BACK);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    assertThat(rubikCube)
+        .isEqualTo(new RubikCube());
+  }
+
+  @Test
+  void rotate_left_initial() {
+    rubikCube.rotate(RotateDirection.LEFT);
+    assertThat(rubikCube.getRightItems())
+        .as("check right side after left rotation")
+        .extracting(CubeItem::getRight)
+        .allMatch(color -> color == RubikCube.INITIAL_COLOR_RIGHT);
+    assertThat(rubikCube.getLeftItems())
+        .as("check left side after left rotation")
+        .extracting(CubeItem::getLeft)
+        .allMatch(color -> color == RubikCube.INITIAL_COLOR_LEFT);
+    assertThat(rubikCube.getFrontItems())
+        .as("check front side after left rotation. But Got: %s", rubikCube.getFrontItems())
+        .extracting(CubeItem::getFront)
+        .containsExactly(RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT,
+            RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT,
+            RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT);
+    assertThat(rubikCube.getTopItems())
+        .as("check top side after left rotation. But Got: %s", rubikCube.getTopItems())
+        .extracting(CubeItem::getTop)
+        .containsExactly(RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_TOP,
+            RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_TOP,
+            RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_TOP, RubikCube.INITIAL_COLOR_TOP);
+    assertThat(rubikCube.getBottomItems())
+        .as("check bottom side after left rotation. But Got: %s", rubikCube.getBottomItems())
+        .extracting(CubeItem::getBottom)
+        .containsExactly(RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_FRONT,
+            RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_FRONT,
+            RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_BOTTOM, RubikCube.INITIAL_COLOR_FRONT);
+    assertThat(rubikCube.getBackItems())
+        .as("check back side after left rotation. But Got: %s", rubikCube.getBackItems())
+        .extracting(CubeItem::getBack)
+        .containsExactly(RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BOTTOM,
+            RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BOTTOM,
+            RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BOTTOM);
+  }
+
+  @Test
+  void rotate_left_counterClockwise() {
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+    rubikCube.rotate(RotateDirection.LEFT);
+    assertThat(rubikCube)
+        .isEqualTo(new RubikCube());
+  }
+
+  @Test
+  void rotate_bottom_initial() {
+    rubikCube.rotate(RotateDirection.BOTTOM);
+    assertThat(rubikCube.getTopItems())
+        .as("check top side after bottom rotation")
+        .extracting(CubeItem::getTop)
+        .allMatch(color -> color == RubikCube.INITIAL_COLOR_TOP);
+    assertThat(rubikCube.getBottomItems())
+        .as("check bottom side after bottom rotation")
+        .extracting(CubeItem::getBottom)
+        .allMatch(color -> color == RubikCube.INITIAL_COLOR_BOTTOM);
+    assertThat(rubikCube.getFrontItems())
+        .as("check front side after bottom rotation. But Got: %s", rubikCube.getFrontItems())
+        .extracting(CubeItem::getFront)
+        .containsExactly(RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT,
+            RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT,
+            RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT);
+    assertThat(rubikCube.getRightItems())
+        .as("check right side after bottom rotation. But Got: %s", rubikCube.getRightItems())
+        .extracting(CubeItem::getRight)
+        .containsExactly(RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT,
+            RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT, RubikCube.INITIAL_COLOR_RIGHT,
+            RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK);
+    assertThat(rubikCube.getBackItems())
+        .as("check back side after bottom rotation. But Got: %s", rubikCube.getBackItems())
+        .extracting(CubeItem::getBack)
+        .containsExactly(RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK,
+            RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK, RubikCube.INITIAL_COLOR_BACK,
+            RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT);
+    assertThat(rubikCube.getLeftItems())
+        .as("check left side after bottom rotation. But Got: %s", rubikCube.getLeftItems())
+        .extracting(CubeItem::getLeft)
+        .containsExactly(RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT,
+            RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT, RubikCube.INITIAL_COLOR_LEFT,
+            RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT, RubikCube.INITIAL_COLOR_FRONT);
+  }
+
+  @Test
+  void rotate_bottom_counterClockwise() {
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+    rubikCube.rotate(RotateDirection.BOTTOM);
+    assertThat(rubikCube)
+        .isEqualTo(new RubikCube());
+  }
 }

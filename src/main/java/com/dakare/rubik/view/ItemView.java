@@ -1,7 +1,6 @@
 package com.dakare.rubik.view;
 
 import com.dakare.rubik.model.CubeItem;
-import com.dakare.rubik.rotate.RotateDirection;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -17,6 +16,7 @@ public class ItemView extends Group {
   private Box right;
   private Box front;
   private Box top;
+  private Box back;
 
   public ItemView(CubeItem cubeItem) {
     this.cubeItem = cubeItem;
@@ -33,9 +33,9 @@ public class ItemView extends Group {
   }
 
   private void createBackEdge() {
-    Box box = new Box(SIZE - 2, SIZE - 2, 1);
-    box.setTranslateZ(SIZE / 2 - 1);
-    getChildren().add(box);
+    back = new Box(SIZE - 2, SIZE - 2, 1);
+    back.setTranslateZ(SIZE / 2 - 1);
+    getChildren().add(back);
   }
 
   private void createLeftEdge() {
@@ -92,7 +92,7 @@ public class ItemView extends Group {
     left.setMaterial(createMaterial(cubeItem.getLeft().getColor()));
     right.setMaterial(createMaterial(cubeItem.getRight().getColor()));
     front.setMaterial(createMaterial(cubeItem.getFront().getColor()));
-    bottom.setMaterial(createMaterial(cubeItem.getBottom().getColor()));
+    back.setMaterial(createMaterial(cubeItem.getBack().getColor()));
   }
 
   private PhongMaterial createMaterial(Color color) {

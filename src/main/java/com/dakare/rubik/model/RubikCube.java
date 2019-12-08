@@ -108,6 +108,15 @@ public class RubikCube {
       case TOP:
       case COUNTER_CLOCKWISE_TOP:
         return rotate(getTopItems(), rotateDirection);
+      case BACK:
+      case COUNTER_CLOCKWISE_BACK:
+        return rotate(getBackItems(), rotateDirection);
+      case LEFT:
+      case COUNTER_CLOCKWISE_LEFT:
+        return rotate(getLeftItems(), rotateDirection);
+      case BOTTOM:
+      case COUNTER_CLOCKWISE_BOTTOM:
+        return rotate(getBottomItems(), rotateDirection);
       default:
         throw new UnsupportedOperationException(rotateDirection + " is not supported");
     }

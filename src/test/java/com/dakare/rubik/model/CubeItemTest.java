@@ -193,4 +193,70 @@ class CubeItemTest {
     assertThat(copy)
         .isEqualTo(original);
   }
+
+  @Test
+  void rotateBack() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.BACK);
+    original.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    assertThat(copy)
+        .as("back is same as counter clockwise front")
+        .isEqualTo(original);
+  }
+
+  @Test
+  void rotateBackCounterClockwise() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    original.rotate(RotateDirection.FRONT);
+    assertThat(copy)
+        .as("front is same as counter clockwise back")
+        .isEqualTo(original);
+  }
+
+  @Test
+  void rotateLeft() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.LEFT);
+    original.rotate(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    assertThat(copy)
+        .as("left is same as counter clockwise right")
+        .isEqualTo(original);
+  }
+
+  @Test
+  void rotateLeftCounterClockwise() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.RIGHT);
+    original.rotate(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+    assertThat(copy)
+        .as("right is same as counter clockwise left")
+        .isEqualTo(original);
+  }
+
+  @Test
+  void rotateBottom() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.BOTTOM);
+    original.rotate(RotateDirection.TOP);
+    assertThat(copy)
+        .as("bottom is same as top")
+        .isEqualTo(original);
+  }
+
+  @Test
+  void rotateBottomCounterClockwise() {
+    CubeItem original = RandomBeanUtils.randomCubeItem();
+    CubeItem copy = new CubeItem(original);
+    copy.rotate(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+    original.rotate(RotateDirection.COUNTER_CLOCKWISE_TOP);
+    assertThat(copy)
+        .as("counter clockwise bottom is same as counter clockwise top")
+        .isEqualTo(original);
+  }
 }

@@ -8,28 +8,26 @@ import javafx.scene.Group;
 
 public class RubikCubeView extends Group {
 
-    private final RubikCube rubikCube;
-    private final AnimationManager animationManager;
+  private final RubikCube rubikCube;
+  private final AnimationManager animationManager;
 
-    public RubikCubeView() {
-        animationManager = new AnimationManager();
-        rubikCube = new RubikCube();
-        setItems();
-    }
+  public RubikCubeView() {
+    animationManager = new AnimationManager();
+    rubikCube = new RubikCube();
+    setItems();
+  }
 
-    private void setItems() {
-        for (CubeItem item : rubikCube.getItems()) {
-            getChildren().add(new ItemView(item));
-        }
+  private void setItems() {
+    for (CubeItem item : rubikCube.getItems()) {
+      getChildren().add(new ItemView(item));
     }
+  }
 
-    @SuppressWarnings("unchecked")
-    public void rotate(RotateDirection rotateDirection) {
-        if (!animationManager.isAnimating()) {
-            rubikCube.rotate(rotateDirection);
-            animationManager.animate((List) getChildren(), rotateDirection);
-        }
-//        getChildren().clear();
-//        setItems();
+  @SuppressWarnings("unchecked")
+  public void rotate(RotateDirection rotateDirection) {
+    if (!animationManager.isAnimating()) {
+      rubikCube.rotate(rotateDirection);
+      animationManager.animate((List) getChildren(), rotateDirection);
     }
+  }
 }
