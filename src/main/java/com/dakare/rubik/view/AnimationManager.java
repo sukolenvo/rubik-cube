@@ -15,13 +15,8 @@ public class AnimationManager {
         .collect(Collectors.toList());
     if (!itemsToMove.isEmpty()) {
       animating.set(true);
-      RotateSideAnimation rotateSideAnimation = new RotateSideAnimation(itemsToMove, rotateDirection);
-      rotateSideAnimation.setOnFinished(event -> {
-        itemsToMove.forEach(item -> {
-          animating.set(false);
-        });
-      });
-      rotateSideAnimation.play();
+      new RotateSideAnimation(itemsToMove, rotateDirection, event -> animating.set(false))
+          .play();
     }
   }
 

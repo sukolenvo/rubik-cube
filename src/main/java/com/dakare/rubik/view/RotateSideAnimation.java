@@ -1,80 +1,71 @@
 package com.dakare.rubik.view;
 
 import com.dakare.rubik.rotate.RotateDirection;
+import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javafx.animation.Transition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
-public class RotateSideAnimation extends Transition {
+public class RotateSideAnimation extends Transition implements EventHandler<ActionEvent> {
 
-  private static final Duration ANIMATION_DURATION = Duration.seconds(1);
+  private static final Duration ANIMATION_DURATION = Duration.millis(700);
 
   private final Map<ItemView, Point3D> fromPosition;
   private final Consumer<Double> rotationFunction;
+  private final List<ItemView> items;
+  private final EventHandler<ActionEvent> onFinishedListener;
 
-  public RotateSideAnimation(List<ItemView> items, RotateDirection rotateDirection) {
+  public RotateSideAnimation(List<ItemView> items, RotateDirection rotateDirection,
+      EventHandler<ActionEvent> onFinishedListener) {
+    this.items = items;
+    this.onFinishedListener = onFinishedListener;
     fromPosition = items.stream().collect(Collectors.toMap(Function.identity(),
         item -> new Point3D(item.getTranslateX(), item.getTranslateY(), item.getTranslateZ())));
+    rotationFunction = prepareRotation(items, rotateDirection);
     setCycleDuration(ANIMATION_DURATION);
     setCycleCount(1);
-    rotationFunction = prepareRotation(items, rotateDirection);
+    setOnFinished(this);
   }
 
   private Consumer<Double> prepareRotation(List<ItemView> items, RotateDirection rotateDirection) {
     switch (rotateDirection) {
       case FRONT: {
-        Map<Rotate, Double> initialAngles = items.stream()
-            .map(item -> item.getRotateAroundAxis(Rotate.Z_AXIS))
-            .collect(Collectors.toMap(Function.identity(), Rotate::getAngle));
-        return fraction -> {
-          initialAngles.forEach((item, initialZ) -> item.setAngle(initialZ + 90 * fraction));
-        };
+        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
+        items.forEach(item -> item.getTransforms().add(rotate));
+        return fraction -> rotate.setAngle(90 * fraction);
       }
       case COUNTER_CLOCKWISE_FRONT: {
-        Map<Rotate, Double> initialAngles = items.stream()
-            .map(item -> item.getRotateAroundAxis(Rotate.Z_AXIS))
-            .collect(Collectors.toMap(Function.identity(), Rotate::getAngle));
-        return fraction -> {
-          initialAngles.forEach((item, initialZ) -> item.setAngle(initialZ - 90 * fraction));
-        };
+        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
+        items.forEach(item -> item.getTransforms().add(rotate));
+        return fraction -> rotate.setAngle(-90 * fraction);
       }
       case RIGHT: {
-        Map<Rotate, Double> initialAngles = items.stream()
-            .map(item -> item.getRotateAroundAxis(Rotate.X_AXIS))
-            .collect(Collectors.toMap(Function.identity(), Rotate::getAngle));
-        return fraction -> {
-          initialAngles.forEach((item, initialX) -> item.setAngle(initialX - 90 * fraction));
-        };
+        Rotate rotate = new Rotate(0, Rotate.X_AXIS);
+        items.forEach(item -> item.getTransforms().add(rotate));
+        return fraction -> rotate.setAngle(-90 * fraction);
       }
       case COUNTER_CLOCKWISE_RIGHT: {
-        Map<Rotate, Double> initialAngles = items.stream()
-            .map(item -> item.getRotateAroundAxis(Rotate.X_AXIS))
-            .collect(Collectors.toMap(Function.identity(), Rotate::getAngle));
-        return fraction -> {
-          initialAngles.forEach((item, initialX) -> item.setAngle(initialX + 90 * fraction));
-        };
+        Rotate rotate = new Rotate(0, Rotate.X_AXIS);
+        items.forEach(item -> item.getTransforms().add(rotate));
+        return fraction -> rotate.setAngle(90 * fraction);
       }
       case TOP: {
-        Map<Rotate, Double> initialAngles = items.stream()
-            .map(item -> item.getRotateAroundAxis(Rotate.Y_AXIS))
-            .collect(Collectors.toMap(Function.identity(), Rotate::getAngle));
-        return fraction -> {
-          initialAngles.forEach((item, initialY) -> item.setAngle(initialY + 90 * fraction));
-        };
+        Rotate rotate = new Rotate(0, Rotate.Y_AXIS);
+        items.forEach(item -> item.getTransforms().add(rotate));
+        return fraction -> rotate.setAngle(90 * fraction);
       }
       case COUNTER_CLOCKWISE_TOP: {
-        Map<Rotate, Double> initialAngles = items.stream()
-            .map(item -> item.getRotateAroundAxis(Rotate.Y_AXIS))
-            .collect(Collectors.toMap(Function.identity(), Rotate::getAngle));
-        return fraction -> {
-          initialAngles.forEach((item, initialY) -> item.setAngle(initialY - 90 * fraction));
-        };
+        Rotate rotate = new Rotate(0, Rotate.Y_AXIS);
+        items.forEach(item -> item.getTransforms().add(rotate));
+        return fraction -> rotate.setAngle(-90 * fraction);
       }
       default:
         throw new UnsupportedOperationException("Unexpected rotate direction: " + rotateDirection);
@@ -89,5 +80,16 @@ public class RotateSideAnimation extends Transition {
       item.setTranslateY(initialPosition.getY() + (item.getExpectedY() - initialPosition.getY()) * frac);
       item.setTranslateZ(initialPosition.getZ() + (item.getExpectedZ() - initialPosition.getZ()) * frac);
     });
+  }
+
+  @Override
+  public void handle(ActionEvent event) {
+    items.forEach(item -> {
+      Preconditions.checkArgument(item.getTransforms().size() == 1,
+          "this implementation with other transformations");
+      item.getTransforms().clear();
+      item.applyColors();
+    });
+    onFinishedListener.handle(event);
   }
 }
