@@ -12,7 +12,7 @@ class RubikCubeTest {
 
   @BeforeEach
   void before() {
-    rubikCube = new RubikCube();
+    rubikCube = RubikCube.createDefault();
   }
 
   @Test
@@ -105,7 +105,7 @@ class RubikCubeTest {
     rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
     rubikCube.rotate(RotateDirection.FRONT);
     assertThat(rubikCube)
-        .isEqualTo(new RubikCube());
+        .isEqualTo(RubikCube.createDefault());
   }
 
   @Test
@@ -150,7 +150,7 @@ class RubikCubeTest {
     rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
     rubikCube.rotate(RotateDirection.RIGHT);
     assertThat(rubikCube)
-        .isEqualTo(new RubikCube());
+        .isEqualTo(RubikCube.createDefault());
   }
 
   @Test
@@ -195,7 +195,7 @@ class RubikCubeTest {
     rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_TOP);
     rubikCube.rotate(RotateDirection.TOP);
     assertThat(rubikCube)
-        .isEqualTo(new RubikCube());
+        .isEqualTo(RubikCube.createDefault());
   }
 
   @Test
@@ -240,7 +240,7 @@ class RubikCubeTest {
     rubikCube.rotate(RotateDirection.BACK);
     rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_BACK);
     assertThat(rubikCube)
-        .isEqualTo(new RubikCube());
+        .isEqualTo(RubikCube.createDefault());
   }
 
   @Test
@@ -285,7 +285,7 @@ class RubikCubeTest {
     rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_LEFT);
     rubikCube.rotate(RotateDirection.LEFT);
     assertThat(rubikCube)
-        .isEqualTo(new RubikCube());
+        .isEqualTo(RubikCube.createDefault());
   }
 
   @Test
@@ -330,6 +330,6 @@ class RubikCubeTest {
     rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
     rubikCube.rotate(RotateDirection.BOTTOM);
     assertThat(rubikCube)
-        .isEqualTo(new RubikCube());
+        .isEqualTo(RubikCube.createDefault());
   }
 }

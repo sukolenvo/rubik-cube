@@ -13,7 +13,7 @@ public class RubikCubeView extends Group {
 
   public RubikCubeView() {
     animationManager = new AnimationManager();
-    rubikCube = new RubikCube();
+    rubikCube = RubikCube.createMixed();
     setItems();
   }
 

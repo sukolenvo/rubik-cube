@@ -3,6 +3,7 @@ package com.dakare.rubik.model;
 import com.dakare.rubik.rotate.RotateDirection;
 import com.dakare.rubik.rotate.CubeItemMove;
 import com.google.common.base.Preconditions;
+import io.github.benas.randombeans.EnhancedRandomBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,7 +28,19 @@ public class RubikCube {
   @Getter
   private final CubeItem[] items;
 
-  public RubikCube() {
+  public static RubikCube createDefault() {
+    return new RubikCube();
+  }
+
+  public static RubikCube createMixed() {
+    RubikCube rubikCube = new RubikCube();
+    EnhancedRandomBuilder.aNewEnhancedRandom()
+        .objects(RotateDirection.class, 20)
+        .forEach(rubikCube::rotate);
+    return rubikCube;
+  }
+
+  private RubikCube() {
     items = new CubeItem[SIZE * SIZE * SIZE];
     for (int i = 0; i < items.length; i++) {
       CubeItem cubeItem = new CubeItem(i);
