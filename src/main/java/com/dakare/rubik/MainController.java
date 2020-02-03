@@ -8,11 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.AmbientLight;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -24,12 +24,12 @@ public class MainController {
   private Rotate rotateHorizontal;
   private double sceneX;
   private double sceneY;
+  @Autowired
   private RubikCubeView rubikCubeView;
 
   @FXML
   private void initialize() {
     Group rootGroup = new Group();
-    rubikCubeView = new RubikCubeView();
     rotateVertical = new Rotate(45, Rotate.X_AXIS);
     rubikCubeView.getTransforms().add(rotateVertical);
     rotateHorizontal = new Rotate(45, Rotate.Y_AXIS);

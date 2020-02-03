@@ -5,19 +5,20 @@ import com.dakare.rubik.model.RubikCube;
 import com.dakare.rubik.rotate.RotateDirection;
 import java.util.List;
 import javafx.scene.Group;
+import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.PostConstruct;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RubikCubeView extends Group {
 
-  private final RubikCube rubikCube;
-  private final AnimationManager animationManager;
+  @Autowired
+  private RubikCube rubikCube;
+  @Autowired
+  private AnimationManager animationManager;
 
-  public RubikCubeView() {
-    animationManager = new AnimationManager();
-    rubikCube = RubikCube.createMixed();
-    setItems();
-  }
-
-  private void setItems() {
+  @PostConstruct
+  public void setItems() {
     for (CubeItem item : rubikCube.getItems()) {
       getChildren().add(new ItemView(item));
     }

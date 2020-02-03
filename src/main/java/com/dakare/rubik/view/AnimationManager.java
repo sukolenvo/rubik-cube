@@ -4,7 +4,9 @@ import com.dakare.rubik.rotate.RotateDirection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AnimationManager {
 
   private AtomicBoolean animating = new AtomicBoolean();
