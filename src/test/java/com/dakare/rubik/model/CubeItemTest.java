@@ -259,4 +259,79 @@ class CubeItemTest {
         .as("counter clockwise bottom is same as counter clockwise top")
         .isEqualTo(original);
   }
+
+  @Test
+  void isOfColors() {
+    CubeItem cubeItem = new CubeItem(0);
+    cubeItem.setFront(ColorWrapper.WHITE);
+    assertThat(cubeItem.isOfColors(ColorWrapper.WHITE))
+        .isTrue();
+    assertThat(cubeItem.isOfColors(ColorWrapper.BLUE, ColorWrapper.WHITE))
+        .isFalse();
+    cubeItem.setLeft(ColorWrapper.BLUE);
+    assertThat(cubeItem.isOfColors(ColorWrapper.WHITE))
+        .isFalse();
+    assertThat(cubeItem.isOfColors(ColorWrapper.BLUE, ColorWrapper.WHITE))
+        .isTrue();
+  }
+
+  @Test
+  void isInPlace_default() {
+    for (CubeItem item : RubikCube.createDefault().getItems()) {
+      assertThat(item.isInPlace())
+          .as("expecting every item to be in right place, but %s was not", item)
+          .isTrue();
+    }
+  }
+
+  @Test
+  void isInPlace_wrongColor() {
+    CubeItem wrongColor = new CubeItem(0);
+    wrongColor.setFront(ColorWrapper.BLUE);
+    assertThat(wrongColor.isInPlace())
+        .as("blue is on the side, white is in front")
+        .isFalse();
+
+  }
+
+  @Test
+  void isInPlace_rightColorsWithWrongRotation() {
+    CubeItem wrongColor = new CubeItem(0);
+    wrongColor.setFront(ColorWrapper.BLUE);
+    wrongColor.setLeft(ColorWrapper.WHITE);
+    assertThat(wrongColor.isInPlace())
+        .as("rotation of cube item is incorrect")
+        .isFalse();
+
+  }
+
+  @Test
+  void isInPlaceIgnoreRotation_default() {
+    for (CubeItem item : RubikCube.createDefault().getItems()) {
+      assertThat(item.isInPlaceIgnoreRotation())
+          .as("expecting every item to be in right place, but %s was not", item)
+          .isTrue();
+    }
+  }
+
+  @Test
+  void isInPlaceIgnoreRotation_wrongColor() {
+    CubeItem wrongColor = new CubeItem(4); // mid front
+    wrongColor.setFront(ColorWrapper.BLUE);
+    assertThat(wrongColor.isInPlaceIgnoreRotation())
+        .as("blue is on the side, white is in front")
+        .isFalse();
+
+  }
+
+  @Test
+  void isInPlaceIgnoreRotation_rightColorsWithWrongRotation() {
+    CubeItem wrongColor = new CubeItem(3); // front left
+    wrongColor.setFront(ColorWrapper.BLUE);
+    wrongColor.setLeft(ColorWrapper.WHITE);
+    assertThat(wrongColor.isInPlaceIgnoreRotation())
+        .as("colors are right, rotation of cube item is incorrect")
+        .isTrue();
+
+  }
 }

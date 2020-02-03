@@ -1,6 +1,7 @@
 package com.dakare.rubik;
 
 import com.dakare.rubik.rotate.RotateDirection;
+import com.dakare.rubik.view.AnimationPlayService;
 import com.dakare.rubik.view.ItemView;
 import com.dakare.rubik.view.RubikCubeView;
 import javafx.application.Platform;
@@ -10,9 +11,11 @@ import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -26,6 +29,8 @@ public class MainController {
   private double sceneY;
   @Autowired
   private RubikCubeView rubikCubeView;
+  @Autowired
+  private ApplicationEventPublisher applicationEventPublisher;
 
   @FXML
   private void initialize() {
@@ -61,6 +66,7 @@ public class MainController {
     root.getScene().setOnKeyPressed(event -> {
       RotateDirection.getByKeyCode(event.getCode())
           .ifPresent(rubikCubeView::rotate);
+      applicationEventPublisher.publishEvent(event.getCode());
     });
   }
 

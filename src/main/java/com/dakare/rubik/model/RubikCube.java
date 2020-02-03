@@ -18,12 +18,12 @@ public class RubikCube {
 
   public static final int SIZE = 3;
 
-  static final ColorWrapper INITIAL_COLOR_FRONT = ColorWrapper.WHITE;
-  static final ColorWrapper INITIAL_COLOR_RIGHT = ColorWrapper.GREEN;
-  static final ColorWrapper INITIAL_COLOR_TOP = ColorWrapper.RED;
-  static final ColorWrapper INITIAL_COLOR_BOTTOM = ColorWrapper.ORANGE;
-  static final ColorWrapper INITIAL_COLOR_BACK = ColorWrapper.YELLOW;
-  static final ColorWrapper INITIAL_COLOR_LEFT = ColorWrapper.BLUE;
+  public static final ColorWrapper INITIAL_COLOR_FRONT = ColorWrapper.WHITE;
+  public static final ColorWrapper INITIAL_COLOR_RIGHT = ColorWrapper.GREEN;
+  public static final ColorWrapper INITIAL_COLOR_TOP = ColorWrapper.RED;
+  public static final ColorWrapper INITIAL_COLOR_BOTTOM = ColorWrapper.ORANGE;
+  public static final ColorWrapper INITIAL_COLOR_BACK = ColorWrapper.YELLOW;
+  public static final ColorWrapper INITIAL_COLOR_LEFT = ColorWrapper.BLUE;
 
   @Getter
   private final CubeItem[] items;
@@ -108,6 +108,13 @@ public class RubikCube {
         .sorted(Comparator.comparingInt(CubeItem::getY)
             .thenComparingInt(CubeItem::getZ))
         .collect(Collectors.toList());
+  }
+
+  public CubeItem findByColors(ColorWrapper... colors) {
+    return Arrays.stream(items)
+        .filter(cubeItem -> cubeItem.isOfColors(colors))
+        .findAny()
+        .orElseThrow(() -> new IllegalStateException("Requested invalid combination of colors: " + Arrays.asList(colors)));
   }
 
   public List<CubeItemMove> rotate(RotateDirection rotateDirection) {

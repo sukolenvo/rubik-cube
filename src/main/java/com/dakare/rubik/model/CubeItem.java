@@ -2,7 +2,10 @@ package com.dakare.rubik.model;
 
 import com.dakare.rubik.rotate.CubeItemMove;
 import com.dakare.rubik.rotate.RotateDirection;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -141,6 +144,60 @@ public class CubeItem {
     colors[fourth] = colors[third];
     colors[third] = colors[second];
     colors[second] = firstValue;
+  }
+
+  public boolean isOfColors(ColorWrapper... colors) {
+    return isOfColors(Arrays.asList(colors));
+  }
+
+  public boolean isOfColors(List<ColorWrapper> expectedColors) {
+    List<ColorWrapper> effectiveColors = Arrays.stream(this.colors)
+        .filter(colorWrapper -> colorWrapper != ColorWrapper.BLACK)
+        .collect(Collectors.toList());
+    return effectiveColors.size() == expectedColors.size()
+        && effectiveColors.containsAll(expectedColors);
+  }
+
+  public boolean isInPlace() {
+    if (colors[TOP_INDEX] != ColorWrapper.BLACK && colors[TOP_INDEX] != RubikCube.INITIAL_COLOR_TOP) {
+      return false;
+    }
+    if (colors[FRONT_INDEX] != ColorWrapper.BLACK && colors[FRONT_INDEX] != RubikCube.INITIAL_COLOR_FRONT) {
+      return false;
+    }
+    if (colors[BOTTOM_INDEX] != ColorWrapper.BLACK && colors[BOTTOM_INDEX] != RubikCube.INITIAL_COLOR_BOTTOM) {
+      return false;
+    }
+    if (colors[BACK_INDEX] != ColorWrapper.BLACK && colors[BACK_INDEX] != RubikCube.INITIAL_COLOR_BACK) {
+      return false;
+    }
+    if (colors[LEFT_INDEX] != ColorWrapper.BLACK && colors[LEFT_INDEX] != RubikCube.INITIAL_COLOR_LEFT) {
+      return false;
+    }
+    if (colors[RIGHT_INDEX] != ColorWrapper.BLACK && colors[RIGHT_INDEX] != RubikCube.INITIAL_COLOR_RIGHT) {
+      return false;
+    }
+    return true;
+  }
+
+  public boolean isInPlaceIgnoreRotation() {
+    List<ColorWrapper> expectedColors = new ArrayList<>();
+    if (getX() == 0) {
+      expectedColors.add(RubikCube.INITIAL_COLOR_LEFT);
+    } else if (getX() == 2) {
+      expectedColors.add(RubikCube.INITIAL_COLOR_RIGHT);
+    }
+    if (getY() == 0) {
+      expectedColors.add(RubikCube.INITIAL_COLOR_TOP);
+    } else if (getY() == 2) {
+      expectedColors.add(RubikCube.INITIAL_COLOR_BOTTOM);
+    }
+    if (getZ() == 0) {
+      expectedColors.add(RubikCube.INITIAL_COLOR_FRONT);
+    } else if (getZ() == 2) {
+      expectedColors.add(RubikCube.INITIAL_COLOR_BACK);
+    }
+    return isOfColors(expectedColors);
   }
 
   @Override
