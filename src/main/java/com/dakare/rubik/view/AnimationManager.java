@@ -4,6 +4,7 @@ import com.dakare.rubik.rotate.RotateDirection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,10 +25,12 @@ public class AnimationManager {
     log.debug("Rotating {} items in {} direction", itemsToMove.size(), rotateDirection);
     if (!itemsToMove.isEmpty()) {
       animating.set(true);
-      new RotateSideAnimation(itemsToMove, rotateDirection, event -> {
-        animating.set(false);
-        applicationEventPublisher.publishEvent(new AnimationFinishedEvent());
-      }).play();
+      Platform.runLater(() -> {
+        new RotateSideAnimation(itemsToMove, rotateDirection, event -> {
+          animating.set(false);
+          applicationEventPublisher.publishEvent(new AnimationFinishedEvent());
+        }).play();
+      });
     }
   }
 
