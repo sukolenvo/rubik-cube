@@ -44,7 +44,7 @@ public class SolveService {
     rotateCrossCubeItemIfNeeded(rubikCube.getItems()[7]);
   }
 
-  private void putCrossCubeItemInPlace(RotateDirection side, ColorWrapper sideColor, int wantedX, int wantedY) {
+  void putCrossCubeItemInPlace(RotateDirection side, ColorWrapper sideColor, int wantedX, int wantedY) {
     CubeItem cubeItem = rubikCube.findByColors(ColorWrapper.WHITE, sideColor);// green red blue orange
     if (!cubeItem.isInPlaceIgnoreRotation()) {
       if (cubeItem.getZ() == 0) {
@@ -99,7 +99,7 @@ public class SolveService {
     }
   }
 
-  private void rotateCrossCubeItemIfNeeded(CubeItem item) {
+  void rotateCrossCubeItemIfNeeded(CubeItem item) {
     if (!item.isInPlace()) {
       int originalX = item.getX();
       int originalY = item.getY();
@@ -131,7 +131,7 @@ public class SolveService {
     completeFirstSideCorner(rubikCube.findByColors(ColorWrapper.WHITE, ColorWrapper.GREEN, ColorWrapper.ORANGE), 2, 2);
   }
 
-  private void completeFirstSideCorner(CubeItem cubeItem, int wantedX, int wantedY) {
+  void completeFirstSideCorner(CubeItem cubeItem, int wantedX, int wantedY) {
     if (!cubeItem.isInPlace()) {
       if (cubeItem.getZ() == 0) {
         if (cubeItem.getIndex() == 0) {
@@ -147,9 +147,9 @@ public class SolveService {
           animationPlayService.executeAction(RotateDirection.BACK);
           animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
         } else if (cubeItem.getIndex() == 8) {
-          animationPlayService.executeAction(RotateDirection.BOTTOM);
-          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
           animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+          animationPlayService.executeAction(RotateDirection.BOTTOM);
         } else {
           throw new IllegalStateException("expecting cube itemto be in corner, but it was not: " + cubeItem);
         }
@@ -201,6 +201,48 @@ public class SolveService {
           animationPlayService.executeAction(RotateDirection.RIGHT);
           animationPlayService.executeAction(RotateDirection.BACK);
           animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+        }
+      } else if (cubeItem.getIndex() == 24) {
+        if (cubeItem.getLeft() == ColorWrapper.WHITE) {
+          animationPlayService.executeAction(RotateDirection.LEFT);
+          animationPlayService.executeAction(RotateDirection.BACK);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+        } else if (cubeItem.getBottom() == ColorWrapper.WHITE) {
+          animationPlayService.executeAction(RotateDirection.BOTTOM);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+        } else {
+          Preconditions.checkArgument(cubeItem.getBack() == ColorWrapper.WHITE,
+              "expecting one of the sides of %s to be white", cubeItem);
+          animationPlayService.executeAction(RotateDirection.LEFT);
+          animationPlayService.executeAction(RotateDirection.BACK);
+          animationPlayService.executeAction(RotateDirection.BACK);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+          animationPlayService.executeAction(RotateDirection.LEFT);
+          animationPlayService.executeAction(RotateDirection.BACK);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+        }
+      } else if (cubeItem.getIndex() == 26) {
+        if (cubeItem.getRight() == ColorWrapper.WHITE) {
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+          animationPlayService.executeAction(RotateDirection.RIGHT);
+        } else if (cubeItem.getBottom() == ColorWrapper.WHITE) {
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+          animationPlayService.executeAction(RotateDirection.BACK);
+          animationPlayService.executeAction(RotateDirection.BOTTOM);
+        } else {
+          Preconditions.checkArgument(cubeItem.getBack() == ColorWrapper.WHITE,
+              "expecting one of the sides of %s to be white", cubeItem);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+          animationPlayService.executeAction(RotateDirection.RIGHT);
+          animationPlayService.executeAction(RotateDirection.BACK);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+          animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+          animationPlayService.executeAction(RotateDirection.RIGHT);
         }
       } else {
         throw new IllegalStateException("expecting cube itemto be in corner, but it was not: " + cubeItem);

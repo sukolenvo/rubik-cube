@@ -16,7 +16,7 @@ import javafx.util.Duration;
 
 public class RotateSideAnimation extends Transition implements EventHandler<ActionEvent> {
 
-  private static final Duration ANIMATION_DURATION = Duration.millis(700);
+  private static final Duration ANIMATION_DURATION = Duration.millis(350);
 
   private final Map<ItemView, Point3D> fromPosition;
   private final Consumer<Double> rotationFunction;
