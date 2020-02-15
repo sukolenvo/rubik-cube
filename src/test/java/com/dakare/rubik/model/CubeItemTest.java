@@ -277,7 +277,7 @@ class CubeItemTest {
 
   @Test
   void isInPlace_default() {
-    for (CubeItem item : RubikCube.createDefault().getItems()) {
+    for (CubeItem item : new RubikCube().getItems()) {
       assertThat(item.isInPlace())
           .as("expecting every item to be in right place, but %s was not", item)
           .isTrue();
@@ -307,7 +307,7 @@ class CubeItemTest {
 
   @Test
   void isInPlaceIgnoreRotation_default() {
-    for (CubeItem item : RubikCube.createDefault().getItems()) {
+    for (CubeItem item : new RubikCube().getItems()) {
       assertThat(item.isInPlaceIgnoreRotation())
           .as("expecting every item to be in right place, but %s was not", item)
           .isTrue();

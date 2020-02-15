@@ -28,19 +28,10 @@ public class RubikCube {
   @Getter
   private final CubeItem[] items;
 
-  public static RubikCube createDefault() {
-    return new RubikCube();
-  }
-
-  public static RubikCube createMixed() {
-    RubikCube rubikCube = new RubikCube();
-    EnhancedRandomBuilder.aNewEnhancedRandom()
-        .objects(RotateDirection.class, 20)
-        .forEach(rubikCube::rotate);
-    return rubikCube;
-  }
-
-  private RubikCube() {
+  /**
+   * Cube is created in solved state.
+   */
+  public RubikCube() {
     items = new CubeItem[SIZE * SIZE * SIZE];
     for (int i = 0; i < items.length; i++) {
       CubeItem cubeItem = new CubeItem(i);
@@ -63,14 +54,20 @@ public class RubikCube {
     }
   }
 
-  List<CubeItem> getFrontItems() {
+  public void mix() {
+    EnhancedRandomBuilder.aNewEnhancedRandom()
+        .objects(RotateDirection.class, 20)
+        .forEach(this::rotate);
+  }
+
+  public List<CubeItem> getFrontItems() {
     return Arrays.stream(items)
         .filter(item -> item.getIndex() < SIZE * SIZE)
         .sorted(Comparator.comparingInt(CubeItem::getIndex))
         .collect(Collectors.toList());
   }
 
-  List<CubeItem> getBackItems() {
+  public List<CubeItem> getBackItems() {
     return Arrays.stream(items)
         .filter(item -> item.getZ() == SIZE - 1)
         .sorted(Comparator.comparingInt(CubeItem::getY)
@@ -78,7 +75,7 @@ public class RubikCube {
         .collect(Collectors.toList());
   }
 
-  List<CubeItem> getTopItems() {
+  public List<CubeItem> getTopItems() {
     return Arrays.stream(items)
         .filter(item -> item.getY() == 0)
         .sorted(Comparator.comparingInt(CubeItem::getZ).reversed()
@@ -86,7 +83,7 @@ public class RubikCube {
         .collect(Collectors.toList());
   }
 
-  List<CubeItem> getBottomItems() {
+  public List<CubeItem> getBottomItems() {
     return Arrays.stream(items)
         .filter(item -> item.getY() == SIZE - 1)
         .sorted(Comparator.comparingInt(CubeItem::getZ)
@@ -94,7 +91,7 @@ public class RubikCube {
         .collect(Collectors.toList());
   }
 
-  List<CubeItem> getLeftItems() {
+  public List<CubeItem> getLeftItems() {
     return Arrays.stream(items)
         .filter(item -> item.getX() == 0)
         .sorted(Comparator.comparingInt(CubeItem::getY)
@@ -102,7 +99,7 @@ public class RubikCube {
         .collect(Collectors.toList());
   }
 
-  List<CubeItem> getRightItems() {
+  public List<CubeItem> getRightItems() {
     return Arrays.stream(items)
         .filter(item -> item.getX() == SIZE - 1)
         .sorted(Comparator.comparingInt(CubeItem::getY)

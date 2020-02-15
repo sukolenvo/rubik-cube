@@ -11,7 +11,9 @@ public class BeanConfig {
 
   @Bean
   public RubikCube getRubikCube() {
-    return RubikCube.createMixed();
+    RubikCube rubikCube = new RubikCube();
+    rubikCube.mix();
+    return rubikCube;
   }
 //
 //  @Bean

@@ -95,6 +95,31 @@ public class CubeItem {
     return this;
   }
 
+  public ColorWrapper getSideColor(RotateDirection side) {
+    switch (side) {
+      case FRONT:
+      case COUNTER_CLOCKWISE_FRONT:
+        return getFront();
+      case TOP:
+      case COUNTER_CLOCKWISE_TOP:
+        return getTop();
+      case RIGHT:
+      case COUNTER_CLOCKWISE_RIGHT:
+        return getRight();
+      case BACK:
+      case COUNTER_CLOCKWISE_BACK:
+        return getBack();
+      case BOTTOM:
+      case COUNTER_CLOCKWISE_BOTTOM:
+        return getBottom();
+      case LEFT:
+      case COUNTER_CLOCKWISE_LEFT:
+        return getLeft();
+      default:
+        throw new IllegalStateException("Unexpected side " + side);
+    }
+  }
+
   public int getX() {
     return index % RubikCube.SIZE;
   }
