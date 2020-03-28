@@ -332,4 +332,19 @@ class RubikCubeTest {
     assertThat(rubikCube)
         .isEqualTo(new RubikCube());
   }
+
+  @Test
+  void getCurrentState() {
+    assertThat(rubikCube.getCurrentState())
+        .as("check initial state")
+        .isEqualTo("WWWWWWWWWRRRRRRRRRGGGGGGGGGOOOOOOOOOUUUUUUUUUYYYYYYYYY");
+  }
+
+  @Test
+  void restoreState() {
+    rubikCube.restoreState("WWWWWWWWWRRRRRRRRRGGGGGGGGGOOOOOOOOOUUUUUUUUUYYYYYYYYY");
+    assertThat(rubikCube)
+        .as("check restoring initial state")
+        .isEqualTo(new RubikCube());
+  }
 }

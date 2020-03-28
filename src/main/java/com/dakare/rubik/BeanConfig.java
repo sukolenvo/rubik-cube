@@ -1,11 +1,11 @@
 package com.dakare.rubik;
 
 import com.dakare.rubik.model.RubikCube;
-import com.dakare.rubik.view.AnimationPlayService;
-import com.dakare.rubik.view.AnimationPlayServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 public class BeanConfig {
 
@@ -13,6 +13,7 @@ public class BeanConfig {
   public RubikCube getRubikCube() {
     RubikCube rubikCube = new RubikCube();
     rubikCube.mix();
+    log.info("Rubik cube is mixed. New state is {}", rubikCube.getCurrentState());
     return rubikCube;
   }
 //

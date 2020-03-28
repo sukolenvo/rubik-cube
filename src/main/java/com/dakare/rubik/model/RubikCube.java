@@ -1,13 +1,14 @@
 package com.dakare.rubik.model;
 
-import com.dakare.rubik.rotate.RotateDirection;
 import com.dakare.rubik.rotate.CubeItemMove;
+import com.dakare.rubik.rotate.RotateDirection;
 import com.google.common.base.Preconditions;
 import io.github.benas.randombeans.EnhancedRandomBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
@@ -178,5 +179,48 @@ public class RubikCube {
       result.add(items.get(j));
     }
     return result;
+  }
+
+  public String getCurrentState() {
+    return getFrontItems().stream()
+        .map(CubeItem::getFront)
+        .map(ColorWrapper::getColorLetter)
+        .collect(Collectors.joining())
+        + getTopItems().stream()
+        .map(CubeItem::getTop)
+        .map(ColorWrapper::getColorLetter)
+        .collect(Collectors.joining())
+        + getRightItems().stream()
+        .map(CubeItem::getRight)
+        .map(ColorWrapper::getColorLetter)
+        .collect(Collectors.joining())
+        + getBottomItems().stream()
+        .map(CubeItem::getBottom)
+        .map(ColorWrapper::getColorLetter)
+        .collect(Collectors.joining())
+        + getLeftItems().stream()
+        .map(CubeItem::getLeft)
+        .map(ColorWrapper::getColorLetter)
+        .collect(Collectors.joining())
+        + getBackItems().stream()
+        .map(CubeItem::getBack)
+        .map(ColorWrapper::getColorLetter)
+        .collect(Collectors.joining());
+  }
+
+  public void restoreState(String state) {
+    Iterator<String> colorLetterIterator = state.chars().mapToObj(letter -> (char) letter).map(Object::toString).iterator();
+    getFrontItems().forEach(item -> item.setFront(ColorWrapper.fromColorLetter(colorLetterIterator.next())));
+    getTopItems().forEach(item -> item.setTop(ColorWrapper.fromColorLetter(colorLetterIterator.next())));
+    getRightItems().forEach(item -> item.setRight(ColorWrapper.fromColorLetter(colorLetterIterator.next())));
+    getBottomItems().forEach(item -> item.setBottom(ColorWrapper.fromColorLetter(colorLetterIterator.next())));
+    getLeftItems().forEach(item -> item.setLeft(ColorWrapper.fromColorLetter(colorLetterIterator.next())));
+    getBackItems().forEach(item -> item.setBack(ColorWrapper.fromColorLetter(colorLetterIterator.next())));
+    Preconditions.checkArgument(!colorLetterIterator.hasNext(), "state contains too many entries %s", state);
+  }
+
+  @Override
+  public String toString() {
+    return "Rubik cube (" + getCurrentState() + ")";
   }
 }
