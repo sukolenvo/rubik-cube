@@ -1,20 +1,23 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.+"
-    }
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
-apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
+javafx {
+    version = "14"
+    modules = [ 'javafx.controls', "javafx.fxml" ]
+}
 
 group 'com.dakare.rubik'
 version '1.0'
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_14
+
+mainClassName="com.dakare.rubik.RubikCubeApp"
 
 repositories {
     mavenCentral()
