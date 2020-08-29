@@ -34,6 +34,7 @@ public class SolveService {
     createCross();
     completeFirstSide();
     completeLevelTwo();
+    completeBack();
   }
 
   private void createCross() {
@@ -375,5 +376,106 @@ public class SolveService {
     return centerCubeItem.getX() != 1 && Math.abs(cubeItem.getX() - centerCubeItem.getX()) != 2
         || centerCubeItem.getY() != 1 && Math.abs(cubeItem.getY() - centerCubeItem.getY()) != 2
         || centerCubeItem.getZ() != 1 && Math.abs(cubeItem.getZ() - centerCubeItem.getZ()) != 2;
+  }
+
+  void completeBack() {
+    moveCorners(0);
+    rotateCorners();
+  }
+
+  void moveCorners(int recursionLevel) {
+    if (recursionLevel > 2) {
+      throw new IllegalStateException("Failed to move corners");
+    }
+    CubeItem topLeft = rubikCube.getItems()[18];
+    CubeItem topRight = rubikCube.getItems()[20];
+    CubeItem bottomLeft = rubikCube.getItems()[24];
+    CubeItem bottomRight = rubikCube.getItems()[26];
+    log.info("Moving corners: {} {} {} {}", topLeft, topRight, bottomLeft, bottomRight);
+    for (int i = 0; !topLeft.isInPlaceIgnoreRotation(); i++) {
+      if (i >= 5) {
+        throw new IllegalStateException("Endless loop detected while moving top left back corner");
+      }
+      animationPlayService.executeAction(RotateDirection.BACK);
+    }
+    int needToMove = 0;
+    if (!topRight.isInPlaceIgnoreRotation()) {
+      log.info("Top right is not in place");
+      needToMove++;
+    }
+    if (!bottomLeft.isInPlaceIgnoreRotation()) {
+      log.info("Bottom left is not in place");
+      needToMove++;
+    }
+    if (!bottomRight.isInPlaceIgnoreRotation()) {
+      log.info("Bottom right is not in place");
+      needToMove++;
+    }
+    if (needToMove == 0) {
+      log.info("Back corners are in place");
+      return;
+    }
+    if (needToMove == 3) {
+      log.info("Moving 3 corners: {} {} {}", topRight, bottomLeft, bottomRight);
+      animationPlayService.executeAction(RotateDirection.RIGHT);
+      animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+      animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+      animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+      animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_TOP);
+      animationPlayService.executeAction(RotateDirection.BACK);
+      animationPlayService.executeAction(RotateDirection.TOP);
+      animationPlayService.executeAction(RotateDirection.BACK);
+      moveCorners(recursionLevel + 1);
+    } else if (needToMove == 2) {
+      if (bottomRight.isInPlaceIgnoreRotation()) {
+        log.info("Swap top right with bottom left");
+        animationPlayService.executeAction(RotateDirection.BACK);
+        animationPlayService.executeAction(RotateDirection.TOP);
+        swapBackRightCorners();
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_TOP);
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+      } else if (!topRight.isInPlaceIgnoreRotation()) {
+        log.info("Swap right corners");
+        swapBackRightCorners();
+      } else {
+        log.info("Swap bottom corners");
+        animationPlayService.executeAction(RotateDirection.BACK);
+        swapBackRightCorners();
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+      }
+    } else {
+      throw new IllegalStateException("Invalid number of corners to swap " + needToMove);
+    }
+  }
+
+  private void swapBackRightCorners() {
+    animationPlayService.executeAction(RotateDirection.RIGHT);
+    animationPlayService.executeAction(RotateDirection.BACK);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_TOP);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    animationPlayService.executeAction(RotateDirection.TOP);
+  }
+
+  private void rotateCorners() {
+    for (int i = 0; i < 4; i++) {
+      CubeItem topRight = rubikCube.getBackItems().get(0);
+      for (int j = 0; topRight.getBack() != ColorWrapper.YELLOW; j++) {
+        if (j >= 3) {
+          throw new IllegalStateException("Endless loop detected while rotating" + topRight);
+        }
+        log.info("Rotating top right {}", topRight);
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+        animationPlayService.executeAction(RotateDirection.RIGHT);
+        animationPlayService.executeAction(RotateDirection.FRONT);
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+        animationPlayService.executeAction(RotateDirection.RIGHT);
+        animationPlayService.executeAction(RotateDirection.FRONT);
+      }
+      animationPlayService.executeAction(RotateDirection.BACK);
+    }
   }
 }

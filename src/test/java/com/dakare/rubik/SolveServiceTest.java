@@ -227,14 +227,124 @@ class SolveServiceTest {
   }
 
   @Test
+  void moveCorners_swapBottom() {
+    rubikCube.rotate(RotateDirection.BOTTOM);
+    rubikCube.rotate(RotateDirection.FRONT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    rubikCube.rotate(RotateDirection.LEFT);
+    solveService.moveCorners(0);
+    assertThat(rubikCube.getItems()[18].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[18])
+        .isTrue();
+    assertThat(rubikCube.getItems()[20].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[20])
+        .isTrue();
+    assertThat(rubikCube.getItems()[24].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[24])
+        .isTrue();
+    assertThat(rubikCube.getItems()[26].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[26])
+        .isTrue();
+  }
+
+  @Test
+  void moveCorners_swapRight() {
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    rubikCube.rotate(RotateDirection.FRONT);
+    rubikCube.rotate(RotateDirection.BOTTOM);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+    solveService.moveCorners(0);
+    assertThat(rubikCube.getItems()[18].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[18])
+        .isTrue();
+    assertThat(rubikCube.getItems()[20].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[20])
+        .isTrue();
+    assertThat(rubikCube.getItems()[24].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[24])
+        .isTrue();
+    assertThat(rubikCube.getItems()[26].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[26])
+        .isTrue();
+  }
+
+  @Test
+  void moveCorners_swapDiagonal() {
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    rubikCube.rotate(RotateDirection.RIGHT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    rubikCube.rotate(RotateDirection.LEFT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    rubikCube.rotate(RotateDirection.RIGHT);
+    solveService.moveCorners(0);
+    assertThat(rubikCube.getItems()[18].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[18])
+        .isTrue();
+    assertThat(rubikCube.getItems()[20].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[20])
+        .isTrue();
+    assertThat(rubikCube.getItems()[24].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[24])
+        .isTrue();
+    assertThat(rubikCube.getItems()[26].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[26])
+        .isTrue();
+  }
+
+  @Test
+  void moveCorners_swapThree() {
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    rubikCube.rotate(RotateDirection.FRONT);
+    rubikCube.rotate(RotateDirection.BOTTOM);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+    rubikCube.rotate(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    rubikCube.rotate(RotateDirection.LEFT);
+    solveService.moveCorners(0);
+    assertThat(rubikCube.getItems()[18].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[18])
+        .isTrue();
+    assertThat(rubikCube.getItems()[20].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[20])
+        .isTrue();
+    assertThat(rubikCube.getItems()[24].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[24])
+        .isTrue();
+    assertThat(rubikCube.getItems()[26].isInPlaceIgnoreRotation())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[26])
+        .isTrue();
+  }
+
+  @Test
   void solve() {
     rubikCube.mix();
     solveService.solve();
     for (int i = 0; i < 18; i++) {
+      if (i == 11) {
+        continue;
+      }
       assertThat(rubikCube.getItems()[i].isInPlace())
           .as("first two levels should be in place, but it was not for %s", rubikCube.getItems()[i])
           .isTrue();
     }
+    assertThat(rubikCube.getItems()[18].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[18])
+        .isTrue();
+    assertThat(rubikCube.getItems()[20].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[20])
+        .isTrue();
+    assertThat(rubikCube.getItems()[24].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[24])
+        .isTrue();
+    assertThat(rubikCube.getItems()[26].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[26])
+        .isTrue();
   }
 }
 
