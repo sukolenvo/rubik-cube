@@ -6,6 +6,8 @@ import com.dakare.rubik.model.RubikCube;
 import com.dakare.rubik.rotate.RotateDirection;
 import com.dakare.rubik.view.AnimationPlayService;
 import com.google.common.base.Preconditions;
+import java.util.Arrays;
+import java.util.Stack;
 import javafx.scene.input.KeyCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +117,10 @@ public class SolveService {
     }
     int originalX = item.getX();
     int originalY = item.getY();
-    while (item.getX() != 0 || item.getY() != 1) { // move to left
+    for (int i = 0; item.getX() != 0 || item.getY() != 1; i++) { // move to left
+      if (i >= 5) {
+        throw new IllegalStateException("Endless loop detected while moving cross " + item);
+      }
       animationPlayService.executeAction(RotateDirection.FRONT);
     }
     // rotate
@@ -381,6 +386,7 @@ public class SolveService {
   void completeBack() {
     moveCorners(0);
     rotateCorners();
+    finalPutInPlace();
   }
 
   void moveCorners(int recursionLevel) {
@@ -476,6 +482,83 @@ public class SolveService {
         animationPlayService.executeAction(RotateDirection.FRONT);
       }
       animationPlayService.executeAction(RotateDirection.BACK);
+    }
+  }
+
+  private void finalPutInPlace() {
+    putInPlaceTopLeftEdge(0);
+    putInPlaceBack(0);
+    log.info("All in place");
+  }
+
+  private void putInPlaceTopLeftEdge(int recursionLevel) {
+    if (recursionLevel > 2) {
+      throw new IllegalStateException("Failed to put in place");
+    }
+    if (!rubikCube.findByPosition(11).isInPlaceIgnoreRotation()) {
+      swapEdgeFrom(rubikCube.findByPosition(11));
+      putInPlaceTopLeftEdge(recursionLevel + 1);
+    }
+  }
+
+  private void putInPlaceBack(int recursionLevel) {
+    if (recursionLevel > 2) {
+      throw new IllegalStateException("Failed to put in place back");
+    }
+    long notInPlace = Arrays.stream(rubikCube.getItems()).filter(item -> !item.isInPlaceIgnoreRotation()).count();
+    if (notInPlace >= 3) {
+      if (rubikCube.getItems()[19].isInPlaceIgnoreRotation()) {
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+        swapEdgeFrom(rubikCube.findByPosition(11));
+        animationPlayService.executeAction(RotateDirection.RIGHT);
+      } else {
+        animationPlayService.executeAction(RotateDirection.TOP);
+        swapEdgeFrom(rubikCube.findByPosition(11));
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_TOP);
+        putInPlaceBack(recursionLevel + 1);
+      }
+    } else if (notInPlace != 0) {
+      throw new IllegalStateException("Unexpected number of items not in place: " + notInPlace);
+    }
+  }
+
+  private void swapEdgeFrom(CubeItem head) {
+    Stack<RotateDirection> undoActions = new Stack<>();
+    CubeItem body = rubikCube.findByPosition(head.getExpectedPosition());
+    CubeItem tail = rubikCube.findByPosition(body.getExpectedPosition());
+    if (tail.getExpectedPosition() < 18 && tail.getExpectedPosition() != head.getIndex()) {
+      tail = body.getIndex() == 21
+          ? rubikCube.findByPosition(25) : rubikCube.findByPosition(21);
+    }
+    log.info("Swap {} {} {}", head, body, tail);
+    for (int i = 0; body.getY() != 2; i++) {
+      if (i >= 5) {
+        throw new IllegalStateException("Endless loop detected while rotating " + body);
+      }
+      animationPlayService.executeAction(RotateDirection.BACK);
+      undoActions.push(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    }
+    animationPlayService.executeAction(RotateDirection.BOTTOM);
+    undoActions.push(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+    for (int i = 0; tail.getX() != 0; i++) {
+      if (i >= 5) {
+        throw new IllegalStateException("Endless loop detected while rotating " + tail);
+      }
+      animationPlayService.executeAction(RotateDirection.BACK);
+      undoActions.push(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    }
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_LEFT);
+    undoActions.push(RotateDirection.LEFT);
+    animationPlayService.executeAction(RotateDirection.FRONT);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    animationPlayService.executeAction(RotateDirection.BOTTOM);
+    animationPlayService.executeAction(RotateDirection.BOTTOM);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    animationPlayService.executeAction(RotateDirection.BACK);
+    animationPlayService.executeAction(RotateDirection.RIGHT);
+    animationPlayService.executeAction(RotateDirection.RIGHT);
+    while (!undoActions.isEmpty()) {
+      animationPlayService.executeAction(undoActions.pop());
     }
   }
 }

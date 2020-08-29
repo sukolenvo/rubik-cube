@@ -335,16 +335,11 @@ class RubikCubeTest {
 
   @Test
   void getCurrentState() {
-    assertThat(rubikCube.getCurrentState())
-        .as("check initial state")
-        .isEqualTo("WWWWWWWWWRRRRRRRRRGGGGGGGGGOOOOOOOOOUUUUUUUUUYYYYYYYYY");
-  }
-
-  @Test
-  void restoreState() {
-    rubikCube.restoreState("WWWWWWWWWRRRRRRRRRGGGGGGGGGOOOOOOOOOUUUUUUUUUYYYYYYYYY");
-    assertThat(rubikCube)
-        .as("check restoring initial state")
-        .isEqualTo(new RubikCube());
+    rubikCube.mix();
+    RubikCube restored = new RubikCube();
+    restored.restoreState(rubikCube.getCurrentState());
+    assertThat(restored)
+        .as("check restore from serialised state")
+        .isEqualTo(rubikCube);
   }
 }

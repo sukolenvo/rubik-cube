@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @EqualsAndHashCode
 public class RubikCube {
 
@@ -59,6 +61,7 @@ public class RubikCube {
     EnhancedRandomBuilder.aNewEnhancedRandom()
         .objects(RotateDirection.class, 20)
         .forEach(this::rotate);
+    log.info("Mixed cube state is {}", getCurrentState());
   }
 
   public List<CubeItem> getFrontItems() {
@@ -113,6 +116,13 @@ public class RubikCube {
         .filter(cubeItem -> cubeItem.isOfColors(colors))
         .findAny()
         .orElseThrow(() -> new IllegalStateException("Requested invalid combination of colors: " + Arrays.asList(colors)));
+  }
+
+  public CubeItem findByPosition(int positionIndex) {
+    return Arrays.stream(items)
+        .filter(cubeItem -> cubeItem.getIndex() == positionIndex)
+        .findAny()
+        .orElseThrow(() -> new IllegalStateException("Invalid position: " + positionIndex));
   }
 
   public List<CubeItemMove> rotate(RotateDirection rotateDirection) {
@@ -217,6 +227,7 @@ public class RubikCube {
     getLeftItems().forEach(item -> item.setLeft(ColorWrapper.fromColorLetter(colorLetterIterator.next())));
     getBackItems().forEach(item -> item.setBack(ColorWrapper.fromColorLetter(colorLetterIterator.next())));
     Preconditions.checkArgument(!colorLetterIterator.hasNext(), "state contains too many entries %s", state);
+    Arrays.sort(this.items, Comparator.comparingInt(CubeItem::getExpectedPosition));
   }
 
   @Override

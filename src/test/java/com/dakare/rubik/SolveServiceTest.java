@@ -11,6 +11,7 @@ import com.dakare.rubik.model.RubikCube;
 import com.dakare.rubik.rotate.RotateDirection;
 import com.dakare.rubik.view.AnimationPlayService;
 import com.google.common.base.Preconditions;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
@@ -322,6 +323,70 @@ class SolveServiceTest {
   }
 
   @Test
+  void solve_swapTwo() {
+    rubikCube.restoreState("RRYGWUYGYWOUYRUWYOGOORGGGYWRYROOUOGUUUGWUWYWUWWRRYRGOO");
+    solveService.solve();
+    for (int i = 0; i < 18; i++) {
+      if (i == 11) {
+        continue;
+      }
+      assertThat(rubikCube.getItems()[i].isInPlace())
+          .as("first two levels should be in place, but it was not for %s", rubikCube.getItems()[i])
+          .isTrue();
+    }
+    assertThat(rubikCube.getItems()[18].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[18])
+        .isTrue();
+    assertThat(rubikCube.getItems()[20].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[20])
+        .isTrue();
+    assertThat(rubikCube.getItems()[24].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[24])
+        .isTrue();
+    assertThat(rubikCube.getItems()[26].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[26])
+        .isTrue();
+
+    assertThat(Arrays.stream(rubikCube.getItems())
+        .filter(item -> !item.isInPlaceIgnoreRotation())
+        .collect(Collectors.toList()))
+        .as("expecting all items to be in place")
+        .isEmpty();
+  }
+
+  @Test
+  void solve_placeTopLeft() {
+    rubikCube.restoreState("GOWOWROOOUWUGRYYGRGUWGGWUWWWUGOOUOUUOYRRUYRRYRRYGYYGWY");
+    solveService.solve();
+    for (int i = 0; i < 18; i++) {
+      if (i == 11) {
+        continue;
+      }
+      assertThat(rubikCube.getItems()[i].isInPlace())
+          .as("first two levels should be in place, but it was not for %s", rubikCube.getItems()[i])
+          .isTrue();
+    }
+    assertThat(rubikCube.getItems()[18].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[18])
+        .isTrue();
+    assertThat(rubikCube.getItems()[20].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[20])
+        .isTrue();
+    assertThat(rubikCube.getItems()[24].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[24])
+        .isTrue();
+    assertThat(rubikCube.getItems()[26].isInPlace())
+        .as("expecting to move corners, but got %s", rubikCube.getItems()[26])
+        .isTrue();
+
+    assertThat(Arrays.stream(rubikCube.getItems())
+        .filter(item -> !item.isInPlaceIgnoreRotation())
+        .collect(Collectors.toList()))
+        .as("expecting all items to be in place")
+        .isEmpty();
+  }
+
+  @Test
   void solve() {
     rubikCube.mix();
     solveService.solve();
@@ -345,6 +410,12 @@ class SolveServiceTest {
     assertThat(rubikCube.getItems()[26].isInPlace())
         .as("expecting to move corners, but got %s", rubikCube.getItems()[26])
         .isTrue();
+
+    assertThat(Arrays.stream(rubikCube.getItems())
+        .filter(item -> !item.isInPlaceIgnoreRotation())
+        .collect(Collectors.toList()))
+        .as("expecting all items to be in place")
+        .isEmpty();
   }
 }
 

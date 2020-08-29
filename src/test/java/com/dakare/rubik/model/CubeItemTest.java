@@ -334,4 +334,14 @@ class CubeItemTest {
         .isTrue();
 
   }
+
+  @Test
+  void expectedPosition() {
+    RubikCube rubikCube = new RubikCube();
+    for (CubeItem item : rubikCube.getItems()) {
+      assertThat(item.getExpectedPosition())
+          .as("all items are in place, so expected position should match index, but got %s", item)
+          .isEqualTo(item.getIndex());
+    }
+  }
 }

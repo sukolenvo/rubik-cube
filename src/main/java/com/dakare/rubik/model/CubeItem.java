@@ -205,6 +205,23 @@ public class CubeItem {
     return true;
   }
 
+  public int getExpectedPosition() {
+    int x = 1;
+    int y = 1;
+    int z = 1;
+    for (ColorWrapper color : colors) {
+      switch (color) {
+        case WHITE -> z = 0;
+        case GREEN -> x = 2;
+        case RED -> y = 0;
+        case ORANGE -> y = 2;
+        case YELLOW -> z = 2;
+        case BLUE -> x = 0;
+      }
+    }
+    return z * RubikCube.SIZE * RubikCube.SIZE + y * RubikCube.SIZE + x;
+  }
+
   public boolean isInPlaceIgnoreRotation() {
     List<ColorWrapper> expectedColors = new ArrayList<>();
     if (getX() == 0) {
