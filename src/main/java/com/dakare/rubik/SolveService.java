@@ -387,6 +387,7 @@ public class SolveService {
     moveCorners(0);
     rotateCorners();
     finalPutInPlace();
+    rotateEdges();
   }
 
   void moveCorners(int recursionLevel) {
@@ -526,9 +527,13 @@ public class SolveService {
     Stack<RotateDirection> undoActions = new Stack<>();
     CubeItem body = rubikCube.findByPosition(head.getExpectedPosition());
     CubeItem tail = rubikCube.findByPosition(body.getExpectedPosition());
-    if (tail.getExpectedPosition() < 18 && tail.getExpectedPosition() != head.getIndex()) {
-      tail = body.getIndex() == 21
-          ? rubikCube.findByPosition(25) : rubikCube.findByPosition(21);
+    if (tail.getExpectedPosition() < 18 && tail.getExpectedPosition() != head.getIndex() || head == tail) {
+      tail = rubikCube.getBackItems().stream()
+          .filter(item -> item != body)
+          .filter(item -> item.getExpectedPosition() > 18)
+          .filter(item -> item.getBack() != RubikCube.INITIAL_COLOR_BACK)
+          .findAny()
+          .orElseThrow(() -> new IllegalStateException("Can't find tail for swap edge"));
     }
     log.info("Swap {} {} {}", head, body, tail);
     for (int i = 0; body.getY() != 2; i++) {
@@ -560,5 +565,88 @@ public class SolveService {
     while (!undoActions.isEmpty()) {
       animationPlayService.executeAction(undoActions.pop());
     }
+  }
+
+  void rotateEdges() {
+    if (!rubikCube.findByPosition(11).isInPlace()) {
+      int i = 0;
+      for (; rubikCube.findByPosition(17).getBack() == RubikCube.INITIAL_COLOR_BACK; i++) {
+        if (i >= 5) {
+          throw new IllegalStateException("Endless loop detected while rotating back");
+        }
+        animationPlayService.executeAction(RotateDirection.BACK);
+      }
+      animationPlayService.executeAction(RotateDirection.BOTTOM);
+      rotateRightEdges();
+      animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+      for (; i > 0; i--) {
+        animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+      }
+    }
+    long notInPlace = rubikCube.getBackItems().stream().filter(cubeItem -> !cubeItem.isInPlace()).count();
+    if (notInPlace == 4) {
+      rotateBackEdges();
+      rotateBackEdges();
+    } if (notInPlace == 2) {
+      rotateBackEdges();
+    } else if (notInPlace != 0) {
+      throw new IllegalStateException("Unexpected number of items to rotate: " + notInPlace);
+    }
+  }
+
+  private void rotateBackEdges() {
+    log.info("Rotating back edges");
+    Stack<RotateDirection> undoActions = new Stack<>();
+    for (int i = 0; rubikCube.findByPosition(19).getBack() == RubikCube.INITIAL_COLOR_BACK; i++) {
+      if (i >= 5) {
+        throw new IllegalStateException("Endless loop detected while rotating back");
+      }
+      animationPlayService.executeAction(RotateDirection.BACK);
+      undoActions.push(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    }
+    animationPlayService.executeAction(RotateDirection.TOP);
+    undoActions.push(RotateDirection.COUNTER_CLOCKWISE_TOP);
+    for (int i = 0; rubikCube.findByPosition(25).getBack() == RubikCube.INITIAL_COLOR_BACK
+        || rubikCube.findByPosition(25).getExpectedPosition() < 18; i++) {
+      if (i >= 5) {
+        throw new IllegalStateException("Endless loop detected while rotating back");
+      }
+      animationPlayService.executeAction(RotateDirection.BACK);
+      undoActions.push(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    }
+    animationPlayService.executeAction(RotateDirection.BOTTOM);
+    undoActions.push(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+    rotateRightEdges();
+    while (!undoActions.isEmpty()) {
+      animationPlayService.executeAction(undoActions.pop());
+    }
+  }
+
+  void rotateRightEdges() {
+    log.info("Rotating edges {} {}", rubikCube.findByPosition(11), rubikCube.findByPosition(17));
+    animationPlayService.executeAction(RotateDirection.FRONT);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    animationPlayService.executeAction(RotateDirection.RIGHT);
+    animationPlayService.executeAction(RotateDirection.RIGHT);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    animationPlayService.executeAction(RotateDirection.BACK);
+    animationPlayService.executeAction(RotateDirection.TOP);
+    animationPlayService.executeAction(RotateDirection.TOP);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    animationPlayService.executeAction(RotateDirection.RIGHT);
+    animationPlayService.executeAction(RotateDirection.BOTTOM);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_FRONT);
+    animationPlayService.executeAction(RotateDirection.BACK);
+    animationPlayService.executeAction(RotateDirection.TOP);
+    animationPlayService.executeAction(RotateDirection.TOP);
+    animationPlayService.executeAction(RotateDirection.FRONT);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BACK);
+    animationPlayService.executeAction(RotateDirection.RIGHT);
+    animationPlayService.executeAction(RotateDirection.RIGHT);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_BOTTOM);
+    animationPlayService.executeAction(RotateDirection.COUNTER_CLOCKWISE_RIGHT);
+    animationPlayService.executeAction(RotateDirection.BACK);
+    animationPlayService.executeAction(RotateDirection.RIGHT);
   }
 }
